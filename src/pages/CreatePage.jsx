@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// Importa las instancias de axios para categorías y artículos
+import { categoriesApi, articlesApi } from '../api/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 
 function CreatePage() {
@@ -10,28 +11,27 @@ function CreatePage() {
   const [categorias, setCategorias] = useState([]);
   const [error, setError] = useState('');
 
-  // Variables de entorno para las URLs
-  const CATEGORIES_API = process.env.REACT_APP_CATEGORIES_URL;
-  const ARTICLES_API = process.env.REACT_APP_ARTICLES_URL;
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    axios.get(`${CATEGORIES_API}/categories`)
+    categoriesApi
+      .get('/categories', { headers: { Authorization: `Bearer ${token}` } })
       .then(res => setCategorias(res.data))
       .catch(() => setError('Error cargando categorías'));
-  }, [CATEGORIES_API]);
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Debes iniciar sesión para crear un artículo');
-        return;
-      }
+    if (!token) {
+      setError('Debes iniciar sesión para crear un artículo');
+      return;
+    }
 
-      await axios.post(`${ARTICLES_API}/articles`, 
+    try {
+      await articlesApi.post(
+        '/articles',
         { titulo, contenido, categoria },
         { headers: { Authorization: `Bearer ${token}` } }
       );
