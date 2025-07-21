@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// Cambia esta línea por esta:
+import { categoriesApi } from '../api/axiosConfig'; // Ajusta la ruta si es necesario
 
 function CategoriasPage() {
   const [categorias, setCategorias] = useState([]);
@@ -11,16 +12,13 @@ function CategoriasPage() {
 
   const token = localStorage.getItem('token');
 
-  // URL base del servicio de categorías desde variable de entorno
-  const CATEGORIES_API = process.env.REACT_APP_CATEGORIES_URL;
-
   useEffect(() => {
     cargarCategorias();
   }, []);
 
   const cargarCategorias = async () => {
     try {
-      const res = await axios.get(`${CATEGORIES_API}/categories`, {
+      const res = await categoriesApi.get('/categories', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCategorias(res.data);
@@ -41,8 +39,8 @@ function CategoriasPage() {
     }
 
     try {
-      await axios.post(
-        `${CATEGORIES_API}/categories`,
+      await categoriesApi.post(
+        '/categories',
         { nombre: nuevoNombre },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -59,7 +57,7 @@ function CategoriasPage() {
     if (!window.confirm('¿Seguro que quieres eliminar esta categoría?')) return;
 
     try {
-      await axios.delete(`${CATEGORIES_API}/categories/${id}`, {
+      await categoriesApi.delete(`/categories/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMensaje('Categoría eliminada');
@@ -91,8 +89,8 @@ function CategoriasPage() {
     }
 
     try {
-      await axios.put(
-        `${CATEGORIES_API}/categories/${id}`,
+      await categoriesApi.put(
+        `/categories/${id}`,
         { nombre: nombreEditado },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -178,5 +176,3 @@ function CategoriasPage() {
 }
 
 export default CategoriasPage;
-
-
