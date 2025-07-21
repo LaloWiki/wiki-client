@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+// Importamos las instancias ya configuradas
+import { articlesApi, categoriesApi } from '../api/axiosConfig';
 
 function EditArticle() {
   const { id } = useParams();
@@ -14,10 +15,6 @@ function EditArticle() {
 
   const token = localStorage.getItem('token');
 
-  // URLs base desde .env con fallback para desarrollo local
-  const articlesURL = process.env.REACT_APP_ARTICLES_URL || 'http://localhost:3002';
-  const categoriesURL = process.env.REACT_APP_CATEGORIES_URL || 'http://localhost:3003';
-
   useEffect(() => {
     if (!token) {
       navigate('/login');
@@ -25,8 +22,8 @@ function EditArticle() {
     }
 
     // Obtener datos del artículo
-    axios
-      .get(`${articlesURL}/articles/${id}`, {
+    articlesApi
+      .get(`/articles/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -43,15 +40,17 @@ function EditArticle() {
       });
 
     // Obtener categorías para el select
-    axios
-      .get(categoriesURL)
+    categoriesApi
+      .get('/categories', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((res) => {
         setCategorias(res.data);
       })
       .catch((err) => {
         console.error('Error al cargar categorías', err);
       });
-  }, [id, navigate, token, articlesURL, categoriesURL]);
+  }, [id, navigate, token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,8 +62,8 @@ function EditArticle() {
     }
 
     try {
-      await axios.put(
-        `${articlesURL}/articles/${id}`,
+      await articlesApi.put(
+        `/articles/${id}`,
         { titulo, contenido, categoria },
         { headers: { Authorization: `Bearer ${token}` } }
       );
