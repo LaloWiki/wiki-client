@@ -8,19 +8,22 @@ function EditarArticulo() {
   const [titulo, setTitulo] = useState('');
   const [contenido, setContenido] = useState('');
 
+  // URL base del microservicio artículos desde .env
+  const baseURL = process.env.REACT_APP_ARTICLES_URL || 'http://localhost:3002';
+
   useEffect(() => {
-    // Cargar los datos del artículo
-    axios.get(`http://localhost:3002/articulos/${id}`)
+    // Cargar los datos del artículo usando la variable de entorno
+    axios.get(`${baseURL}/articles/${id}`)
       .then(res => {
         setTitulo(res.data.titulo);
         setContenido(res.data.contenido);
       })
       .catch(err => console.error(err));
-  }, [id]);
+  }, [id, baseURL]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`http://localhost:3002/articulos/${id}`, { titulo, contenido })
+    axios.put(`${baseURL}/articles/${id}`, { titulo, contenido })
       .then(() => {
         alert('Artículo actualizado');
         navigate('/');
