@@ -8,12 +8,15 @@ function LoginPage() {
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState('');
 
+  // URL base para auth desde .env con fallback local
+  const authURL = process.env.REACT_APP_AUTH_URL || 'http://localhost:3001';
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:3001/auth/login', {
+      const res = await axios.post(`${authURL}/auth/login`, {
         email: correo,
         password: contrasena,
       });
