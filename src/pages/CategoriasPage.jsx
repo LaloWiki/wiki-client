@@ -11,13 +11,16 @@ function CategoriasPage() {
 
   const token = localStorage.getItem('token');
 
+  // ✅ Lee la variable de entorno que pondrás en Vercel
+  const API_URL = import.meta.env.VITE_CATEGORIES_API;
+
   useEffect(() => {
     cargarCategorias();
   }, []);
 
   const cargarCategorias = async () => {
     try {
-      const res = await axios.get('http://localhost:3003/categories', {
+      const res = await axios.get(`${API_URL}/categories`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCategorias(res.data);
@@ -39,7 +42,7 @@ function CategoriasPage() {
 
     try {
       await axios.post(
-        'http://localhost:3003/categories',
+        `${API_URL}/categories`,
         { nombre: nuevoNombre },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -56,7 +59,7 @@ function CategoriasPage() {
     if (!window.confirm('¿Seguro que quieres eliminar esta categoría?')) return;
 
     try {
-      await axios.delete(`http://localhost:3003/categories/${id}`, {
+      await axios.delete(`${API_URL}/categories/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMensaje('Categoría eliminada');
@@ -89,7 +92,7 @@ function CategoriasPage() {
 
     try {
       await axios.put(
-        `http://localhost:3003/categories/${id}`,
+        `${API_URL}/categories/${id}`,
         { nombre: nombreEditado },
         { headers: { Authorization: `Bearer ${token}` } }
       );
