@@ -1,9 +1,11 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+
+
+const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_AUTH_URL || 'http://localhost:3000',
- });
+  baseURL,
+});
 
 // Función para configurar interceptor 
 export function setupAxiosInterceptors(navigate) {
