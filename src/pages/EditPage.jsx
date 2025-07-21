@@ -14,6 +14,10 @@ function EditArticle() {
 
   const token = localStorage.getItem('token');
 
+  // URLs base desde .env con fallback para desarrollo local
+  const articlesURL = process.env.REACT_APP_ARTICLES_URL || 'http://localhost:3002';
+  const categoriesURL = process.env.REACT_APP_CATEGORIES_URL || 'http://localhost:3003';
+
   useEffect(() => {
     if (!token) {
       navigate('/login');
@@ -22,7 +26,7 @@ function EditArticle() {
 
     // Obtener datos del artículo
     axios
-      .get(`http://localhost:3002/articles/${id}`, {
+      .get(`${articlesURL}/articles/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -40,14 +44,14 @@ function EditArticle() {
 
     // Obtener categorías para el select
     axios
-      .get('http://localhost:3003/categories')
+      .get(categoriesURL)
       .then((res) => {
         setCategorias(res.data);
       })
       .catch((err) => {
         console.error('Error al cargar categorías', err);
       });
-  }, [id, navigate, token]);
+  }, [id, navigate, token, articlesURL, categoriesURL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +64,7 @@ function EditArticle() {
 
     try {
       await axios.put(
-        `http://localhost:3002/articles/${id}`,
+        `${articlesURL}/articles/${id}`,
         { titulo, contenido, categoria },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -130,3 +134,4 @@ function EditArticle() {
 }
 
 export default EditArticle;
+
