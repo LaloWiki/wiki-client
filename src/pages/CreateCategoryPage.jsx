@@ -8,6 +8,9 @@ function CreateCategoryPage() {
   const [error, setError] = useState('');
   const [ok, setOk] = useState('');
 
+  // URL base del servicio de categorías desde variable de entorno
+  const CATEGORIES_API = process.env.REACT_APP_CATEGORIES_URL;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -20,14 +23,15 @@ function CreateCategoryPage() {
         return;
       }
 
-      await axios.post('http://localhost:3003/categories', 
+      await axios.post(
+        `${CATEGORIES_API}/categories`,
         { nombre },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setOk('Categoría creada con éxito');
       setNombre('');
-      setTimeout(() => navigate('/'), 1500); // Redirige al home 
+      setTimeout(() => navigate('/'), 1500); // Redirige al home
 
     } catch (err) {
       console.error(err);
