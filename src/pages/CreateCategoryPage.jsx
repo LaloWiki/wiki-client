@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// Importa la instancia configurada para categorías
+import { categoriesApi } from '../api/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 
 function CreateCategoryPage() {
@@ -8,23 +9,21 @@ function CreateCategoryPage() {
   const [error, setError] = useState('');
   const [ok, setOk] = useState('');
 
-  // URL base del servicio de categorías desde variable de entorno
-  const CATEGORIES_API = process.env.REACT_APP_CATEGORIES_URL;
+  const token = localStorage.getItem('token');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setOk('');
 
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Debes iniciar sesión para crear categorías');
-        return;
-      }
+    if (!token) {
+      setError('Debes iniciar sesión para crear categorías');
+      return;
+    }
 
-      await axios.post(
-        `${CATEGORIES_API}/categories`,
+    try {
+      await categoriesApi.post(
+        '/categories',
         { nombre },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -32,7 +31,6 @@ function CreateCategoryPage() {
       setOk('Categoría creada con éxito');
       setNombre('');
       setTimeout(() => navigate('/'), 1500); // Redirige al home
-
     } catch (err) {
       console.error(err);
       setError('Error al crear categoría');
