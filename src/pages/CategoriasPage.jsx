@@ -11,8 +11,8 @@ function CategoriasPage() {
 
   const token = localStorage.getItem('token');
 
-  // ✅ Lee la variable de entorno que pondrás en Vercel
-  const API_URL = import.meta.env.VITE_CATEGORIES_API;
+  // URL base del servicio de categorías desde variable de entorno
+  const CATEGORIES_API = process.env.REACT_APP_CATEGORIES_URL;
 
   useEffect(() => {
     cargarCategorias();
@@ -20,7 +20,7 @@ function CategoriasPage() {
 
   const cargarCategorias = async () => {
     try {
-      const res = await axios.get(`${API_URL}/categories`, {
+      const res = await axios.get(`${CATEGORIES_API}/categories`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCategorias(res.data);
@@ -42,7 +42,7 @@ function CategoriasPage() {
 
     try {
       await axios.post(
-        `${API_URL}/categories`,
+        `${CATEGORIES_API}/categories`,
         { nombre: nuevoNombre },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -59,7 +59,7 @@ function CategoriasPage() {
     if (!window.confirm('¿Seguro que quieres eliminar esta categoría?')) return;
 
     try {
-      await axios.delete(`${API_URL}/categories/${id}`, {
+      await axios.delete(`${CATEGORIES_API}/categories/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMensaje('Categoría eliminada');
@@ -92,7 +92,7 @@ function CategoriasPage() {
 
     try {
       await axios.put(
-        `${API_URL}/categories/${id}`,
+        `${CATEGORIES_API}/categories/${id}`,
         { nombre: nombreEditado },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -178,4 +178,5 @@ function CategoriasPage() {
 }
 
 export default CategoriasPage;
+
 
