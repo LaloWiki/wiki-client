@@ -8,10 +8,8 @@ function HomePage() {
 
   const token = localStorage.getItem('token');
 
-  // Detectamos si estamos en producción (Vercel) o desarrollo (localhost)
-  const API_URL = process.env.NODE_ENV === 'production'
-    ? 'https://articles-service-production-url.onrender.com' // reemplaza con tu URL real en Railway
-    : 'http://localhost:3002';
+  // Obtenemos la URL base desde el archivo .env
+  const ARTICLES_API = process.env.REACT_APP_ARTICLES_URL;
 
   useEffect(() => {
     if (!token) {
@@ -20,7 +18,7 @@ function HomePage() {
     }
 
     axios
-      .get(`${API_URL}/articles`, {
+      .get(`${ARTICLES_API}/articles`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setArticulos(res.data))
@@ -31,7 +29,7 @@ function HomePage() {
           navigate('/login');
         }
       });
-  }, [navigate, token]);
+  }, [navigate, token, ARTICLES_API]);
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -42,7 +40,7 @@ function HomePage() {
     if (!window.confirm('¿Seguro que quieres eliminar este artículo?')) return;
 
     try {
-      await axios.delete(`${API_URL}/articles/${id}`, {
+      await axios.delete(`${ARTICLES_API}/articles/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setArticulos(articulos.filter((art) => art._id !== id));
@@ -54,7 +52,6 @@ function HomePage() {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      {/* Menú principal */}
       <header className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
         <h1 className="text-3xl font-bold">WikiGestor</h1>
         <nav className="flex flex-wrap gap-3">
@@ -79,7 +76,6 @@ function HomePage() {
         </nav>
       </header>
 
-      {/* Lista de artículos */}
       <section>
         <h2 className="text-2xl font-semibold mb-4">Artículos</h2>
         {articulos.length === 0 ? (
