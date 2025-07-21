@@ -10,12 +10,15 @@ function CreatePage() {
   const [categorias, setCategorias] = useState([]);
   const [error, setError] = useState('');
 
-  
+  // Variables de entorno para las URLs
+  const CATEGORIES_API = process.env.REACT_APP_CATEGORIES_URL;
+  const ARTICLES_API = process.env.REACT_APP_ARTICLES_URL;
+
   useEffect(() => {
-    axios.get('http://localhost:3003/categories')
+    axios.get(`${CATEGORIES_API}/categories`)
       .then(res => setCategorias(res.data))
       .catch(() => setError('Error cargando categorías'));
-  }, []);
+  }, [CATEGORIES_API]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +31,7 @@ function CreatePage() {
         return;
       }
 
-      await axios.post('http://localhost:3002/articles', 
+      await axios.post(`${ARTICLES_API}/articles`, 
         { titulo, contenido, categoria },
         { headers: { Authorization: `Bearer ${token}` } }
       );
