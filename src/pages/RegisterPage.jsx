@@ -9,13 +9,16 @@ function RegisterPage() {
   const [error, setError] = useState('');
   const [mensaje, setMensaje] = useState('');
 
+  // URL base para auth desde .env con fallback local
+  const authURL = process.env.REACT_APP_AUTH_URL || 'http://localhost:3001';
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
     setMensaje('');
 
     try {
-      const res = await axios.post('http://localhost:3001/auth/register', {
+      const res = await axios.post(`${authURL}/auth/register`, {
         email: correo,
         password: contrasena,
       });
