@@ -8,6 +8,11 @@ function HomePage() {
 
   const token = localStorage.getItem('token');
 
+  // Detectamos si estamos en producción (Vercel) o desarrollo (localhost)
+  const API_URL = process.env.NODE_ENV === 'production'
+    ? 'https://articles-service-production-url.onrender.com' // reemplaza con tu URL real en Railway
+    : 'http://localhost:3002';
+
   useEffect(() => {
     if (!token) {
       navigate('/login');
@@ -15,7 +20,7 @@ function HomePage() {
     }
 
     axios
-      .get('http://localhost:3002/articles', {
+      .get(`${API_URL}/articles`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setArticulos(res.data))
@@ -37,7 +42,7 @@ function HomePage() {
     if (!window.confirm('¿Seguro que quieres eliminar este artículo?')) return;
 
     try {
-      await axios.delete(`http://localhost:3002/articles/${id}`, {
+      await axios.delete(`${API_URL}/articles/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setArticulos(articulos.filter((art) => art._id !== id));
@@ -117,3 +122,4 @@ function HomePage() {
 }
 
 export default HomePage;
+
