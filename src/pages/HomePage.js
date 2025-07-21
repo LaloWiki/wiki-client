@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { articlesApi } from '../api/axiosConfig'; // importa la instancia axios configurada
 
 function HomePage() {
   const [articulos, setArticulos] = useState([]);
@@ -8,19 +8,14 @@ function HomePage() {
 
   const token = localStorage.getItem('token');
 
-  // Obtenemos la URL base desde el archivo .env
-  const ARTICLES_API = process.env.REACT_APP_ARTICLES_URL;
-
   useEffect(() => {
     if (!token) {
       navigate('/login');
       return;
     }
 
-    axios
-      .get(`${ARTICLES_API}/articles`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+    articlesApi
+      .get('/articles', { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => setArticulos(res.data))
       .catch((err) => {
         console.error('Error cargando artículos', err);
@@ -29,7 +24,7 @@ function HomePage() {
           navigate('/login');
         }
       });
-  }, [navigate, token, ARTICLES_API]);
+  }, [navigate, token]);
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -40,9 +35,7 @@ function HomePage() {
     if (!window.confirm('¿Seguro que quieres eliminar este artículo?')) return;
 
     try {
-      await axios.delete(`${ARTICLES_API}/articles/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await articlesApi.delete(`/articles/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setArticulos(articulos.filter((art) => art._id !== id));
     } catch (error) {
       console.error('Error al eliminar artículo', error);
