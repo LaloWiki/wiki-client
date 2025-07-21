@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import { articlesApi } from '../api/axiosConfig'; // Importa la instancia axios configurada
 
 function EditarArticulo() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [titulo, setTitulo] = useState('');
   const [contenido, setContenido] = useState('');
-
-  // URL base del microservicio artículos desde .env
-  const baseURL = process.env.REACT_APP_ARTICLES_URL || 'http://localhost:3002';
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    // Cargar los datos del artículo usando la variable de entorno
-    axios.get(`${baseURL}/articles/${id}`)
+    articlesApi
+      .get(`/articles/${id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(res => {
         setTitulo(res.data.titulo);
         setContenido(res.data.contenido);
       })
       .catch(err => console.error(err));
-  }, [id, baseURL]);
+  }, [id, token]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.put(`${baseURL}/articles/${id}`, { titulo, contenido })
+    articlesApi
+      .put(`/articles/${id}`, { titulo, contenido }, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         alert('Artículo actualizado');
         navigate('/');
@@ -40,12 +39,14 @@ function EditarArticulo() {
           value={titulo}
           onChange={e => setTitulo(e.target.value)}
           placeholder="Título"
+          required
         />
         <textarea
           className="w-full p-2 border rounded"
           value={contenido}
           onChange={e => setContenido(e.target.value)}
           placeholder="Contenido"
+          required
         />
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
           Guardar Cambios
@@ -56,3 +57,4 @@ function EditarArticulo() {
 }
 
 export default EditarArticulo;
+
